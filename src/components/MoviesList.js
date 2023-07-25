@@ -1,13 +1,39 @@
-import React from 'react'
+import React, {useEffect, useState} from "react"
+import "./MoviesList.css"
+import { useParams } from "react-router-dom"
+import Cards from "./Card"
 
-const MoviesList = () => {
+const MovieList = () => {
+    
+    const [movieList, setMovieList] = useState([])
+    const {type} = useParams()
 
+    useEffect(() => {
+        getData()
+    }, [])
 
-  return (
-    <div>
-      
-    </div>
-  )
+    useEffect(() => {
+        getData()
+    }, [type])
+
+    const getData = () => {
+        fetch(`https://api.themoviedb.org/3/movie/${type ? type : "popular"}?api_key=42d039fcc62cc28932ec0acf05964888&language=en-US`)
+        .then(res => res.json())
+        .then(data => setMovieList(data.results))
+    }
+
+    return (
+        <div className="movie__list">
+            <h2 className="list__title">{(type ? type : "POPULAR").toUpperCase()}</h2>
+            <div className="list__cards">
+                {
+                    movieList.map(movie => (
+                        <Cards movie={movie} />
+                    ))
+                }
+            </div>
+        </div>
+    )
 }
 
-export default MoviesList
+export default MovieList
